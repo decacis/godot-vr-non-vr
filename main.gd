@@ -5,6 +5,10 @@ const VR_RIG : PackedScene = preload("res://Rigs/VRRig/VRRig.tscn")
 
 var openxr_enabled : bool = false
 
+var openxr_interface : OpenXRInterface
+@onready var csg_box_3d = $CSGBox3D
+@onready var label_3d = $Label3D
+
 
 func _ready() -> void:
 	# Remove the override settings. They are used to start with OpenXR enabled
@@ -12,7 +16,13 @@ func _ready() -> void:
 	_project_started()
 	
 	# Is OpenXR enabled?
-	openxr_enabled = ProjectSettings.get_setting("xr/openxr/enabled", false)
+	if OS.is_debug_build():
+		openxr_enabled = ProjectSettings.get_setting("xr/openxr/enabled", false)
+	# Release build
+	else:
+		var xr_interface : XRInterface = XRServer.find_interface("OpenXR")
+		if xr_interface and xr_interface.is_initialized():
+			openxr_enabled = true
 	
 	print("OpenXR Enabled: ", openxr_enabled)
 	
@@ -26,16 +36,23 @@ func _ready() -> void:
 
 
 func _restart_with_xr() -> void:
-	# This is for an exported game.
-	OS.set_restart_on_exit(true, ["--xr-mode on"])
-	
-	# And this is for the editor.
+	# This is for the editor.
 	if OS.is_debug_build():
 		var config = ConfigFile.new()
 		# Enable OpenXR
 		config.set_value("xr", "openxr/enabled", true)
 		# Save override file
 		config.save("res://override.cfg")
+	
+	# And this for a release build
+	else:
+		match OS.get_name():
+			"Windows":
+				OS.create_process("cmd.exe", ["/c", OS.get_executable_path() + " --xr-mode on"])
+			"Linux":
+				OS.create_process("bash", ["-c", OS.get_executable_path() + " --xr-mode on"])
+			_:
+				print("Unsupported OS.")
 	
 	get_tree().quit()
 

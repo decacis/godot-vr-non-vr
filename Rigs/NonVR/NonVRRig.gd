@@ -37,4 +37,4 @@ func _input(event) -> void:
 		head_pivot.rotate_y(-ev.relative.x * sensitivity)
 		head_camera.rotate_x(-ev.relative.y * sensitivity)
 		
-		head_pivot.rotation.x = clampf(head_pivot.rotation.x, -PI/2.0, PI/2.0)
+		head_camera.rotation.x = clampf(head_camera.rotation.x, -PI/2.0, PI/2.0)
