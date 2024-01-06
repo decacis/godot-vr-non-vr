@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://c5ma37gfjeav6"]
+
+[ext_resource type="Script" path="res://Rigs/NonVR/NonVRRig.gd" id="1_lvob5"]
+
+[node name="NonVRRig" type="Node3D"]
+script = ExtResource("1_lvob5")
+
+[node name="HeadPivot" type="Node3D" parent="."]
+
+[node name="HeadCamera" type="Camera3D" parent="HeadPivot"]

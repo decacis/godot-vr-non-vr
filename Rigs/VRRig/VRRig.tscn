@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://c3bea1i1e4vrj"]
+
+[ext_resource type="Script" path="res://Rigs/VRRig/VRRig.gd" id="1_tf6h8"]
+
+[node name="VrRig" type="Node3D"]
+script = ExtResource("1_tf6h8")
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+
+[node name="LeftController" type="XRController3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 0)
+tracker = &"left_hand"
+pose = &"aim"
+
+[node name="RightController" type="XRController3D" parent="XROrigin3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0)
+tracker = &"right_hand"
+pose = &"aim"
