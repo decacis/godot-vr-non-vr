@@ -5,10 +5,6 @@ const VR_RIG : PackedScene = preload("res://Rigs/VRRig/VRRig.tscn")
 
 var openxr_enabled : bool = false
 
-var openxr_interface : OpenXRInterface
-@onready var csg_box_3d = $CSGBox3D
-@onready var label_3d = $Label3D
-
 
 func _ready() -> void:
 	# Remove the override settings. They are used to start with OpenXR enabled
