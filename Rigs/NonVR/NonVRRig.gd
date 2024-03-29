@@ -1,5 +1,6 @@
 extends Node3D
 
+signal request_xr_restart
 
 @export var height : float = 1.7 :
 	get:
@@ -11,16 +12,21 @@ extends Node3D
 
 @export var sensitivity : float = 0.005
 
-@onready var head_pivot = $HeadPivot
-@onready var head_camera = $HeadPivot/HeadCamera
-
-
-func _handle_height() -> void:
-	head_pivot.position.y = height
+@onready var head_pivot : Node3D = %HeadPivot
+@onready var head_camera : Camera3D = %HeadCamera
+@onready var restart_xr_btn : Button = %RestartXRBtn
 
 
 func _ready() -> void:
 	_handle_height()
+	
+	restart_xr_btn.pressed.connect(func():
+		request_xr_restart.emit()
+	)
+
+
+func _handle_height() -> void:
+	head_pivot.position.y = height
 
 
 func _process(_delta : float) -> void:

@@ -7,24 +7,29 @@ var openxr_enabled : bool = false
 
 
 func _ready() -> void:
-	# Remove the override settings. They are used to start with OpenXR enabled
-	# in the editor, but after that they can be removed for the next start
-	_project_started()
+	# Get command line arguments
+	var args : PackedStringArray = OS.get_cmdline_args()
 	
-	# Is OpenXR enabled?
-	if OS.is_debug_build():
+	# Is OpenXR enabled? (Editor)
+	if OS.has_feature("editor"):
 		openxr_enabled = ProjectSettings.get_setting("xr/openxr/enabled", false)
-	# Release build
+	
+	# Release/debug build
 	else:
 		var xr_interface : XRInterface = XRServer.find_interface("OpenXR")
 		if xr_interface and xr_interface.is_initialized():
 			openxr_enabled = true
+		
+		if args.has("--restart-with-xr") and not openxr_enabled:
+			print("Failed to start OpenXR")
 	
 	print("OpenXR Enabled: ", openxr_enabled)
 	
 	var rig : Node3D
 	if not openxr_enabled:
 		rig = NON_VR_RIG.instantiate()
+		# Connect Desktop UI button
+		rig.request_xr_restart.connect(_restart_with_xr)
 	else:
 		rig = VR_RIG.instantiate()
 	
@@ -32,39 +37,21 @@ func _ready() -> void:
 
 
 func _restart_with_xr() -> void:
-	# This is for the editor.
-	if OS.is_debug_build():
-		var config = ConfigFile.new()
-		# Enable OpenXR
-		config.set_value("xr", "openxr/enabled", true)
-		# Save override file
-		config.save("res://override.cfg")
-	
-	# And this for a release build
-	else:
+	# Only runs when exported (either debug or release)
+	if OS.has_feature("template"):
+		var pid : int = -1
 		match OS.get_name():
 			"Windows":
-				OS.create_process("cmd.exe", ["/c", OS.get_executable_path() + " --xr-mode on"])
+				pid = OS.create_process("cmd.exe", ["/c", "\"%s\"" % OS.get_executable_path() + " --xr-mode on --restart-with-xr"])
 			"Linux":
-				OS.create_process("bash", ["-c", OS.get_executable_path() + " --xr-mode on"])
+				pid = OS.create_process("bash", ["-c", "\"%s\"" % OS.get_executable_path() + " --xr-mode on --restart-with-xr"])
 			_:
 				print("Unsupported OS.")
-	
-	get_tree().quit()
-
-
-func _project_started() -> void:
-	if OS.is_debug_build() and FileAccess.file_exists("res://override.cfg"):
-		print("Removing override file")
-		DirAccess.remove_absolute("res://override.cfg")
-
-
-func _input(event) -> void:
-	# When pressing ENTER the game will quit and
-	# the next start will be in VR
-	if event is InputEventKey:
-		var ev : InputEventKey = event
-		if ev.is_action_pressed("ui_accept"):
-			if not openxr_enabled:
-				print("Next start will have OpenXR enabled.")
-				_restart_with_xr()
+		
+		# Process created, now quit.
+		if pid != -1:
+			get_tree().quit()
+		
+		else:
+			# TODO: Unable to create process for some reason. Inform the user.
+			pass
