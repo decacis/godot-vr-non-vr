@@ -9,3 +9,5 @@ An EditorPlugin is included that adds a CheckButton (toggle) called "XR Enabled"
 The "RESTART WITH XR" button that shows up when running in desktop mode will close the game and restart with OpenXR enabled (only on exported projects).
 
 In the `main.gd` file, you'll see how to identify when OpenXR was requested, but it failed to start, and it fallsback to desktop mode when that happens.
+
+**Make sure to enable the plugin in your Project Settings.** A toggle will be added to the editor toolbar, next to Play, Pause, Stop, etc.
