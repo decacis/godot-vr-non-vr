@@ -11,6 +11,9 @@ func _enter_tree() -> void:
 	
 	add_export_plugin(export_plugin)
 	add_control_to_container(EditorPlugin.CONTAINER_TOOLBAR, xr_toggle)
+	
+	# Initialize
+	_toggle_xr_mode(xr_toggle.button_pressed)
 
 
 func _create_export_plugin() -> void:
