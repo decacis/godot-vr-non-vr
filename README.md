@@ -1,5 +1,7 @@
 # Godot VR and Non-VR Example
 
+## **NOTE: DEPRECATED. PLEASE USE THE GODOT PROJECT FROM [Godot XR Toggle](https://github.com/decacis/Godot-XR-Toggle)**
+
 Basic example of a game that supports VR and non-VR mode.
 
 **IMPORTANT:** You must have enabled OpenXR and XR Shader in the Project Settings at least once before. After that, OpenXR can be disabled in the Project Settings (optionally).
